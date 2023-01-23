@@ -1,0 +1,53 @@
+* haskell-project-example
+
+A follow along project for Haskell fundamentals workshop. Emphasizes practical solutions in Haskell, and covers the range of concepts needed to use Haskell in industry.
+
+* Setup
+
+ To ensure you have a working system, make sure you can run ~stack run~
+ You should the string ~someFunc~ as the output
+
+ Choose one of the following options
+
+
+** Nix Flake
+
+1. Install [[https://nixos.org/][Nix]]
+2. Enable [[https://nixos.wiki/wiki/Flakes][nix flakes]] /experimental feature/
+3. ~cd haskell-project-example~
+4. ~nix develop~
+5. ~stack run~
+3. *globally* install [[https://haskell-language-server.readthedocs.io/en/latest/installation.html][haskell-language-server]]
+4. ensure editor has lsp client
+5. follow editor specific instructions on setting up lsp client and haskell-language-server
+
+
+** Nix Flake + Direnv
+
+[[https://direnv.net][Direnv]] loads the project shell environment when you ~cd~ into the directory.
+Combined with nix this allows reproducibility and eases dev setup.
+It allows declaring all global dependencies (especially dev dependencies) within the project as executable code rather than documentation.
+
+1. Install [[https://nixos.org/][Nix]]
+2. Enable [[https://nixos.wiki/wiki/Flakes][nix flakes]] /experimental feature/
+3. Install [[https://direnv.net][Direnv]]
+4. ~cd haskell-project-example~
+5. ~echo "use flake" > .envrc~
+6. ~direnv allow~
+7. ~stack run~
+8. ensure editor has direnv extension installed. This ensures that the editor picks up dev tools like haskell-language-server. The below are examples, not necessarily recommendations
+   - emacs: [[https://github.com/wbolster/emacs-direnv][emacs-direnv]]
+   - vim: [[https://github.com/direnv/direnv.vim][direnv.vim]]
+   - vscode: [[https://marketplace.visualstudio.com/items?itemName=Rubymaniac.vscode-direnv][direnv]]
+
+
+** Stack
+
+If you prefer not to use nix then using stack works as usual.
+In this case you can set up editor tools globally.
+
+1. ~stack build~
+2. ~stack run~
+3. *globally* install [[https://haskell-language-server.readthedocs.io/en/latest/installation.html][haskell-language-server]]
+4. ensure editor has lsp client
+5. follow editor specific instructions on setting up lsp client and haskell-language-server
