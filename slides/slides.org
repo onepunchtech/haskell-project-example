@@ -1,0 +1,555 @@
+#+TITLE: Haskell Project Fundamentals
+
+* Agenda
+
+
+** Day 1
+
+  - History/Motivation
+  - Haskell Design Patterns
+    - Typeclassopedia Lite
+    - The Expression Problem
+  - Project
+    - Build System
+    - High level Project Architecture
+    - Declarative HTTP API
+    - HTTP Client
+
+** Day 2
+
+  - Iteratively improve project
+  - ReaderT Pattern
+  - Concurrency
+  - Error handling
+  - Logging
+  - Time
+
+** Day 3
+  - FFI
+  - Testing strategies
+  - Benchmarking
+  - Profiling
+
+
+* "Engineering"
+
+
+[[file:./images/calvin-hobbes.webp]]
+
+* The Halting Problem
+
+
+- Given an arbitrary program and arbitrary input, the determination of whether the program halts or runs forever is undecidable.
+
+* Entscheidungsproblem
+
+
+- English: The Decision problem
+- David Hilbert & Wilhelm Ackermann posed the question in 1928
+  - Is there an algorithm that given a proposition can determine if it is valid
+
+* Lambda Calculus & Alonzo Church
+
+#+ATTR_ORG: :width 600
+[[file:./images/alonzo-church.jpg]]
+
+
+#+BEGIN_SRC haskell
+  ---- Definition ----
+
+   x    -- Variables
+   λx.x -- Abstraction
+   x y  -- Application
+
+  ---- Encodings ----
+
+  TRUE = λx.λy.x
+  FALSE = λx.λy.y
+  IF = λb.λt.λf.b t f
+
+  ---- Evaluation by substitution (rewriting) ----
+
+  IF TRUE 1 0
+
+  (λb.λt.λf.b t f) True 1 0
+
+  (λb.λt.λf.b t f) (λx.λy.x) 1 0
+
+  (λt.λf.(λx.λy.x) t f) 1 0
+
+  (λf.(λx.λy.x) 1 f) 0
+
+  (λx.λy.x) 1 0
+
+  (λy.1) 0
+
+  1
+#+END_SRC
+
+- Church's Thesis: 1935
+- Proved the Entscheidungsproblem false with his lambda calculus
+- There is no algorithm which can determine two λ-calculus expressions to be equivalent
+
+* Turing Machine & Alan Turing
+
+#+ATTR_ORG: :width 600
+[[file:./images/alan-turing.jpg]]
+
+- Proved the Entscheidungsproblem false with his Turing machine
+- There is no general algorithm that can determine if instructions to a Turing machine will produce a 0. (It may run forever) i.e. The halting problem
+- Even though Turing's paper was published in 1936 his work is considered independent, and concurrent to Church's thesis
+  - Turing amended his paper proving computational equivalence between λ-Calculus and Turing machines
+
+* Typed Lambda Calculus
+
+
+- λ-calculus contains logical inconsistencies
+- Church added types to λ-calculus fix it
+- No longer Turing complete
+
+* Computing All The Things!
+
+#+ATTR_ORG: :width 600
+[[file:./images/computability.jpg]]
+
+* Functional programming developments
+
+
+- Lambda calculus
+- Typed Lambda calculus
+- Lisp
+  - lambda calculus with sugar
+  - Garbage collector
+- Haskell was created
+  - needed a uniform language for research
+  - typed lambda calculus with sugar
+* Von Neumann architecture
+
+
+- Architecture described (First Draft of a Report on the EDVAC, 1945)
+- Von Neumann architecture solidifies in popularity as computing speeds increase exponentially
+
+* Haskell Lazy First
+
+
+- G-Machines compile functional programs to run efficiently on Von Neumann architecture
+  - (Implementing functional languages: a tutorial, 1992)
+- A lazy first language required purity
+  - Side effects are a problem in a pure lazy language
+  - The concept of Monads is borrowed from category theory
+  - Monads concisely express the ordering of operations.
+
+* Semigroup & Monoid
+
+
+** Code Review
+
+#+BEGIN_SRC haskell
+
+  sum :: [Int] -> Int
+  sum [] = 0
+  sum (n:ns) = n + sum ns
+
+#+END_SRC
+
+** Deeper Review
+
+#+BEGIN_SRC haskell
+
+  -- Code we are thinking about today...
+
+  sum :: [Int] -> Int
+  sum [] = 0
+  sum (n:ns) = n + sum ns
+
+  -- Forgotten code...
+
+  import qualified Data.Map as M
+
+  mergeMap :: [M.Map String String] -> M.Map String String
+  mergeMap [] = M.empty
+  mergeMap (n:ns) = n `M.union` (mergeMap ns)
+
+  -- Oh yeah we wrote this one a long time ago...
+
+  concat :: [String] -> String
+  concat [] = ""
+  concat (s:ss) = s ++ concat s
+
+#+END_SRC
+
+** Refactoring
+
+#+BEGIN_SRC haskell
+
+  class Semigroup a where
+    join :: a -> a -> a
+
+  class Semigroup a => Monoid a where
+    mempty  :: a
+    mappend :: a -> a -> a
+
+
+#+END_SRC
+
+* Functor
+
+** Code Review
+
+
+#+BEGIN_SRC haskell
+  data Maybe a
+    = Just a
+    | Nothing
+
+  import qualified Data.Map as M
+
+  incrementMaybe :: Maybe Int -> Maybe Int
+  incrementMaybe Nothing = Nothing
+  incrementMaybe (Just n) = n + 1
+
+  incrementList :: [Int] -> [Int]
+  incrementList [] = []
+  incrementList (n:ns) = n + 1 : incrementList ns
+
+  incrementMap :: M.Map String Int -> M.Map String Int
+  incrementMap m = M.fromList $ go $ M.toList m
+    where
+      go [] = []
+      go ((key, value):rest) = (key, value + 1) : go rest
+
+#+END_SRC
+
+** Refactoring
+
+#+BEGIN_SRC haskell
+
+  class Functor f where
+    (<$>) :: (a -> b) -> f a -> f b
+
+#+END_SRC
+
+* Applicative
+
+** Code Review
+
+
+#+BEGIN_SRC haskell
+req1 :: String -> Maybe Int
+req1 _ = Just 4
+
+req2 :: String -> Maybe Int
+req2 _ = Just 2
+
+req3 :: String -> Maybe Int
+req3 _ = Just 42
+
+data Answers = Answers
+    { res1 :: Int
+    , res2 :: Int
+    , res3 :: Int
+    }
+
+run :: String -> Either String Answers
+run q =
+    let
+        ma1 = req1 q
+        ma2 = req2 q
+        ma3 = req3 q
+        answers = case (ma1, ma2, ma3) of
+            (Just a1, Just a2, Just a3) -> Right $ Answers a1 a2 a3
+            (Nothing, _, _) -> Left "req1 failed"
+            (_, Nothing, _) -> Left "req2 failed"
+            (_, _, Nothing) -> Left "req3 failed"
+     in
+        answers
+#+END_SRC
+
+
+** Refactoring
+
+#+BEGIN_SRC haskell
+
+  class (Functor f) => Applicative f where
+    pure :: a -> f a
+    (<*>) :: f (a -> b) -> f a -> f  b
+    (*>) :: f a -> f b -> f b
+    (<*) :: f a -> f b -> f a
+
+#+END_SRC
+
+* Monad
+
+** Code Review
+
+
+#+BEGIN_SRC haskell
+req1 :: String -> Either String Int
+req1 _ = Right 4
+
+req2 :: String -> Either String Int
+req2 _ = Right 2
+
+req3 :: String -> Either String Int
+req3 _ = Right 42
+
+run :: String -> String -> String -> Either String Int
+run q1 q2 q3 =
+    case req1 q1 of
+        Left err -> Left err
+        Right r1 -> runSecond q2 q3 r1
+
+runSecond :: String -> String -> Int -> Either String Int
+runSecond q2 q3 r1 =
+    case req2 q2 of
+        Left err -> Left err
+        Right r2 ->
+            let processedRes = r2 + r1
+             in if even processedRes
+                    then runThird q3 processedRes
+                    else Left "Odd answers are obviously wrong"
+
+runThird :: String -> Int -> Either String Int
+runThird q3 accum =
+    case req3 q3 of
+        Left err -> Left err
+        Right r3 ->
+            let processedRes = r3 + accum
+             in if processedRes /= 42
+                    then Right processedRes
+                    else Left "WRONG!"
+
+#+END_SRC
+
+** Refactoring
+
+#+BEGIN_SRC haskell
+
+  class (Applicative m) => Monad m where
+    (>>=) :: forall a b. m a -> (a -> m b) -> m b
+
+#+END_SRC
+
+* Expression problem
+
+
+** Data
+
+
+#+BEGIN_SRC haskell
+  data Shape
+    = Circle { radius :: Int}
+    | Square { side :: Int}
+    | Rectangle { w :: Int, h :: Int}
+
+  area :: Shape -> Double
+  area shape = case shape of
+    (Circle r) = pi * r^2
+    (Square s) = s * s
+    (Rectangle w h) = w * h
+
+  perimeter :: Shape -> Double
+  perimiter shape =
+    case shape of
+      (Circle r) = pi * 2 * r
+      (Square r) = s * 4
+      (Rectangle w h) = (2 * w) + (2 * h)
+
+#+END_SRC
+
+** Classes
+
+
+#+BEGIN_SRC haskell
+  class Shape a where
+    area :: a -> Double
+
+  data Circle = Circle { radius :: Int }
+
+  instance Shape Circle where
+    area (Circle r) = pi * r^2
+
+  data Square = Square { side :: Int }
+
+  instance Shape Square where
+    area (Square s) = s * s
+
+  data Rectangle = Rectangle { w :: Int, h :: Int }
+
+  instance Shape Rectangle where
+    area (Rectangle w h) = w * h
+
+#+END_SRC
+#+END_SRC
+** Solution
+
+
+Finally tagless
+
+#+BEGIN_SRC haskell
+  -- ???
+#+END_SRC
+
+** Conclusion
+
+#+begin_quote
+It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures.
+
+-- Alan Perlis
+#+end_quote
+
+- Classes are better suited for situations when laws are well understood
+
+Rails Conf 2012 Keynote: Simplicity Matters by Rich Hickey
+
+* Project setup
+
+
+** Project features
+The project will be an HTTP API.
+
+Endpoints:
+  - Create user
+  - Get list of users
+  - Get User by id
+  - Create subscription to stock analysis
+  - Get list of users' stock analysis reports
+  - Get users' stock analysis report by id
+  - Initialize in memory database
+
+Concepts covered:
+  - HTTP API
+  - JSON parsing
+  - HTTP Client
+  - Error handling
+  - Logging
+  - ReaderT pattern
+  - Command line option parsing
+  - Multithreading
+  - Streaming Data
+  - Tabular data
+  - Foreign Function Interface
+  - Tests
+    - Formatting test output
+    - Basic testing
+    - Property based testing
+    - Stateful property based testing
+  - Generate API documentation
+  - Performance
+    - Benchmarking
+    - Profiling
+      - Space
+      - Time
+    - Load testing
+
+
+** Build System
+
+*** Nix
+
+Pros:
+  - Reproducibility
+  - Flexibility
+  - Infrastructure as code
+  - Package manager for system-wide dependencies
+  - Same build system for all languages
+
+Cons:
+  - Steep learning curve
+  - When it breaks it can take significant effort to fix
+  - Whole team buy in
+
+
+*** Stack
+
+Pros:
+  - Simple
+
+Cons:
+  - No management of system deps
+  - No integration with other languages
+
+
+*** Cabal
+
+  - Cabal is not a package manager, it is a Haskell build system
+  - Cabal hell without a package manager
+
+
+** Architecture
+
+*** Choosing between effect systems
+
+**** Monad Transformer Stack
+
+     - Track effects through type system
+     - mtl or tranformers
+     - n * m problem
+     - Performance
+       - Can be bad if stack is large
+       - Negligible for small stacks
+       - Can be improved using continuation passing style
+     - Proven track record
+
+**** Extensible Effects
+
+     - Track effects through type system
+     - Flexibility
+     - Performance:
+       - Not the primary goal
+       - Attempts at improving performance works for small examples
+     - Hot research topic, possible gamble for production
+
+**** ReaderT
+
+     - Track effects through type system
+     - Proven track record
+     - Performance
+       - Easier for compiler to optimize
+
+* Command line parsing
+
+* ReaderT
+
+* HTTP API
+
+* HTTP Client
+
+* ErrorHandling
+
+* Multithreading
+** STM Overview
+** Implementation
+
+* FFI
+
+* Tests
+** Setup
+** Property Based Testing
+** Stateful Property Based Testing
+
+* Benchmarking
+
+* Profiling
+
+* DSL
+
+* Parting Notes
+
+** Databases
+
+** Libraries
+
+  - Time
+    - https://www.williamyaoh.com/posts/2019-09-16-time-cheatsheet.html
+  - Concurrency
+    - Parallel and Concurrent Programming in Haskell: https://www.oreilly.com/library/view/parallel-and-concurrent/9781449335939/
+
+# Extra if we have time
+
+* Arrows
+* Free Monad
+* GADTs
+* Data Parallelism
+* Recursion schemes
+* Reduce ReaderT Boilerplate

@@ -1,13 +1,13 @@
-name: haskell-project-example
+name: example
 version: 0.1.0.0
-github: "githubuser/haskell-project-example"
+github: "githubuser/example"
 license: BSD3
 author: "Author name here"
 maintainer: "example@example.com"
 copyright: "2023 Author name here"
 
 extra-source-files:
-  - README.org
+  - README.md
   - CHANGELOG.md
 
 # Metadata used when publishing your package
@@ -17,10 +17,32 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/githubuser/haskell-project-example#readme>
+description: Please see the README on GitHub at <https://github.com/githubuser/example#readme>
 
 dependencies:
   - base >= 4.7 && < 5
+  - servant
+  - servant-server
+  - servant-client
+  - text
+  - wai
+  - warp
+  - aeson
+  - http-types
+  - vector
+  - http-client
+  - exceptions
+  - wai-extra
+  - data-default
+  - stm
+  - containers
+  - time
+  - mtl
+  - cassava
+  - conduit
+  - csv-conduit
+  - http-conduit
+  - bytestring
 
 ghc-options:
   - -Wall
@@ -37,7 +59,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-project-example-exe:
+  api:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -45,15 +67,26 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - haskell-project-example
+      - example
 
 tests:
-  haskell-project-example-test:
-    main: Spec.hs
+  example-test:
+    main: Main.hs
     source-dirs: test
     ghc-options:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - haskell-project-example
+      - hspec
+      - hspec-discover
+      - hspec-junit-formatter
+      - pretty-simple
+      - example
+
+default-extensions:
+  - DeriveGeneric
+  - ImportQualifiedPost
+  - OverloadedStrings
+  - LambdaCase
+  - GeneralizedNewtypeDeriving
