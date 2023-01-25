@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./test/Spec.hs"
+      component: "example:test:example-test"
+
+    - path: "./app/Main.hs"
+      component: "example:exe:api"
+
+    - path: "./src/API/HTTP.hs"
+      component: "example:lib"

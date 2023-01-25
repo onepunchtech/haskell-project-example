@@ -189,6 +189,29 @@
     mempty  :: a
     mappend :: a -> a -> a
 
+  instance Semigroup Int where
+    join a b = a + b
+
+  instance Semigroup Data.Map where
+    join a b = a `M.union` b
+
+  instance Semigroup String where
+    join a b = a ++ b
+
+  instance Monoid Int where
+    mappend a b = join a b
+    mempty = 0
+
+
+  go :: (Monoid a) => [a] -> a
+  go [] = mempty
+  go (x:xs) = x `mappend` go xs
+
+
+  go :: Dict -> (a: Type) -> [a] -> a
+  go allMethodsOnA tipe [] =
+
+
 
 #+END_SRC
 
@@ -208,6 +231,10 @@
   incrementMaybe Nothing = Nothing
   incrementMaybe (Just n) = n + 1
 
+  incrementMaybe m = fmap (\n -> n  + 1) m
+  incrementMaybe m = (\n -> n + 1) <$> m
+  incrementMaybe m = m <&> (\n -> n + 1) <&> (\n -> n - 100)
+
   incrementList :: [Int] -> [Int]
   incrementList [] = []
   incrementList (n:ns) = n + 1 : incrementList ns
@@ -226,6 +253,19 @@
 
   class Functor f where
     (<$>) :: (a -> b) -> f a -> f b
+    (fmap) :: (a -> b) -> f a -> f b
+
+  instance Functor Maybe where
+    fmap f m = case m of
+                 Just a -> f a
+                 Nothing -> Nothing
+
+  instance Functor [a] where
+    fmap f m = case m of
+                 [] -> []
+                 (x:xs) -> f x : fmap f xs
+
+
 
 #+END_SRC
 
@@ -272,9 +312,18 @@ run q =
 
   class (Functor f) => Applicative f where
     pure :: a -> f a
-    (<*>) :: f (a -> b) -> f a -> f  b
+    (<*>) :: f (a -> b) -> f a -> f b
     (*>) :: f a -> f b -> f b
     (<*) :: f a -> f b -> f a
+
+
+  run :: String -> Either String Answers
+  run q =
+    let
+      Answers <$> req1 q <*> req2 q <*> req3 q
+
+
+
 
 #+END_SRC
 
@@ -284,40 +333,40 @@ run q =
 
 
 #+BEGIN_SRC haskell
-req1 :: String -> Either String Int
-req1 _ = Right 4
+  req1 :: String -> Either String Int
+  req1 _ = Right 4
 
-req2 :: String -> Either String Int
-req2 _ = Right 2
+  req2 :: String -> Either String Int
+  req2 _ = Right 2
 
-req3 :: String -> Either String Int
-req3 _ = Right 42
+  req3 :: String -> Either String Int
+  req3 _ = Right 42
 
-run :: String -> String -> String -> Either String Int
-run q1 q2 q3 =
-    case req1 q1 of
-        Left err -> Left err
-        Right r1 -> runSecond q2 q3 r1
+  run :: String -> String -> String -> Either String Int
+  run q1 q2 q3 =
+      case req1 q1 of
+          Left err -> Left err
+          Right r1 -> runSecond q2 q3 r1
 
-runSecond :: String -> String -> Int -> Either String Int
-runSecond q2 q3 r1 =
-    case req2 q2 of
-        Left err -> Left err
-        Right r2 ->
-            let processedRes = r2 + r1
-             in if even processedRes
-                    then runThird q3 processedRes
-                    else Left "Odd answers are obviously wrong"
+  runSecond :: String -> String -> Int -> Either String Int
+  runSecond q2 q3 r1 =
+      case req2 q2 of
+          Left err -> Left err
+          Right r2 ->
+              let processedRes = r2 + r1
+               in if even processedRes
+                      then runThird q3 processedRes
+                      else Left "Odd answers are obviously wrong"
 
-runThird :: String -> Int -> Either String Int
-runThird q3 accum =
-    case req3 q3 of
-        Left err -> Left err
-        Right r3 ->
-            let processedRes = r3 + accum
-             in if processedRes /= 42
-                    then Right processedRes
-                    else Left "WRONG!"
+  runThird :: String -> Int -> Either String Int
+  runThird q3 accum =
+      case req3 q3 of
+          Left err -> Left err
+          Right r3 ->
+              let processedRes = r3 + accum
+               in if processedRes /= 42
+                      then Right processedRes
+                      else Left "WRONG!"
 
 #+END_SRC
 
@@ -326,7 +375,13 @@ runThird q3 accum =
 #+BEGIN_SRC haskell
 
   class (Applicative m) => Monad m where
-    (>>=) :: forall a b. m a -> (a -> m b) -> m b
+    (>>==) :: forall a b. m a -> (a -> m b) -> m b
+    (<$>) ::             f a -> (a -> b) -> f b
+
+  run :: String -> String -> String -> Either String Int
+  run q1 q2 q3 =
+     req q1 >>= (\res1 -> req2 q2 >>= (\res2 -> req3 q3))
+
 
 #+END_SRC
 
@@ -354,6 +409,9 @@ runThird q3 accum =
       (Circle r) = pi * 2 * r
       (Square r) = s * 4
       (Rectangle w h) = (2 * w) + (2 * h)
+
+  describe :: Shape -> String
+  describe = undefined
 
 #+END_SRC
 
@@ -387,7 +445,21 @@ runThird q3 accum =
 Finally tagless
 
 #+BEGIN_SRC haskell
-  -- ???
+  class Area a where
+    area :: a -> Double
+
+  class Perimeter a where
+    perim :: a -> Double
+
+  data Square = Square Double
+
+  instance Area Square where
+    area (Square s) = s * s
+
+  data Circle = Circle Double
+
+  instance Area Circle where
+    area (Circle r) = pi * r * r
 #+END_SRC
 
 ** Conclusion
@@ -544,6 +616,11 @@ Cons:
     - https://www.williamyaoh.com/posts/2019-09-16-time-cheatsheet.html
   - Concurrency
     - Parallel and Concurrent Programming in Haskell: https://www.oreilly.com/library/view/parallel-and-concurrent/9781449335939/
+  - HTTP Clients
+    - wreq good for one offs
+    - servant-client (define spec from scratch)
+    - For large public apis open api spec generators are common
+      - Example: https://github.com/fullstack-development/haskell-plaid-generated
 
 # Extra if we have time
 

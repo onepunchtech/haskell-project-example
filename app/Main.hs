@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Lib
+import API.HTTP (runServer)
 
 main :: IO ()
-main = someFunc
+main = runServer
