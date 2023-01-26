@@ -13,7 +13,6 @@ import Data.Time
 import Data.Time.Format.ISO8601
 import Datasources.Alpaca.Data
 import Network.HTTP.Client
-import Network.Wreq
 
 import Config
 import Monad

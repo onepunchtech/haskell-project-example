@@ -9,6 +9,7 @@ module Monad (
 ) where
 
 import Config
+import Control.Concurrent
 import Control.Monad.Catch
 import Control.Monad.IO.Class
 import Control.Monad.Reader

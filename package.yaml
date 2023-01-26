@@ -48,6 +48,7 @@ dependencies:
   - pretty-simple
   - optparse-applicative
   - http-client-tls
+  - async
 
 ghc-options:
   - -Wall

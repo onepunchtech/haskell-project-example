@@ -39,5 +39,8 @@ cradle:
     - path: "./src/Datasources/Alpaca/Data.hs"
       component: "example:lib"
 
+    - path: "./src/Demo.hs"
+      component: "example:lib"
+
     - path: "./src/Monad.hs"
       component: "example:lib"

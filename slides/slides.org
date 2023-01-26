@@ -630,3 +630,9 @@ Cons:
 * Data Parallelism
 * Recursion schemes
 * Reduce ReaderT Boilerplate
+
+* 3rd day priorities
+  - Benchmarking
+    - profiling
+  - Concurrency
+  - FFI

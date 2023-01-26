@@ -23,6 +23,8 @@
           hPkgs.hspec-discover
           stack-wrapped
           pkgs.zlib
+          pkgs.rustc
+          pkgs.cargo
         ];
 
         stack-wrapped = pkgs.symlinkJoin {
