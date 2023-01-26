@@ -25,10 +25,16 @@ source-repository head
 
 library
   exposed-modules:
-      Analysis.HTTP
       API.Data
       API.Handlers
       API.HTTP
+      CLI
+      Config
+      Datasources.Alpaca
+      Datasources.Alpaca.API
+      Datasources.Alpaca.Data
+      Demo
+      Monad
   other-modules:
       Paths_example
   hs-source-dirs:
@@ -39,6 +45,7 @@ library
       OverloadedStrings
       LambdaCase
       GeneralizedNewtypeDeriving
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
@@ -51,10 +58,12 @@ library
     , data-default
     , exceptions
     , http-client
+    , http-client-tls
     , http-conduit
     , http-types
     , lens
     , mtl
+    , optparse-applicative
     , pretty-simple
     , servant
     , servant-client
@@ -81,6 +90,7 @@ executable api
       OverloadedStrings
       LambdaCase
       GeneralizedNewtypeDeriving
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -94,10 +104,12 @@ executable api
     , example
     , exceptions
     , http-client
+    , http-client-tls
     , http-conduit
     , http-types
     , lens
     , mtl
+    , optparse-applicative
     , pretty-simple
     , servant
     , servant-client
@@ -116,6 +128,8 @@ test-suite example-test
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      Analysis.Calculations
+      E2E.APISpec
       Spec
       Paths_example
   hs-source-dirs:
@@ -126,6 +140,7 @@ test-suite example-test
       OverloadedStrings
       LambdaCase
       GeneralizedNewtypeDeriving
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -142,10 +157,12 @@ test-suite example-test
     , hspec-discover
     , hspec-junit-formatter
     , http-client
+    , http-client-tls
     , http-conduit
     , http-types
     , lens
     , mtl
+    , optparse-applicative
     , pretty-simple
     , servant
     , servant-client

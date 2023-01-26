@@ -1,2 +1,43 @@
 cradle:
   stack:
+    - path: "./test/Main.hs"
+      component: "example:test:example-test"
+
+    - path: "./test/Analysis/Calculations.hs"
+      component: "example:test:example-test"
+
+    - path: "./test/E2E/APISpec.hs"
+      component: "example:test:example-test"
+
+    - path: "./test/Spec.hs"
+      component: "example:test:example-test"
+
+    - path: "./app/Main.hs"
+      component: "example:exe:api"
+
+    - path: "./src/API/Data.hs"
+      component: "example:lib"
+
+    - path: "./src/API/Handlers.hs"
+      component: "example:lib"
+
+    - path: "./src/API/HTTP.hs"
+      component: "example:lib"
+
+    - path: "./src/CLI.hs"
+      component: "example:lib"
+
+    - path: "./src/Config.hs"
+      component: "example:lib"
+
+    - path: "./src/Datasources/Alpaca.hs"
+      component: "example:lib"
+
+    - path: "./src/Datasources/Alpaca/API.hs"
+      component: "example:lib"
+
+    - path: "./src/Datasources/Alpaca/Data.hs"
+      component: "example:lib"
+
+    - path: "./src/Monad.hs"
+      component: "example:lib"

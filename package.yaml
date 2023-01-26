@@ -46,6 +46,8 @@ dependencies:
   - wreq
   - lens
   - pretty-simple
+  - optparse-applicative
+  - http-client-tls
 
 ghc-options:
   - -Wall
@@ -92,3 +94,4 @@ default-extensions:
   - OverloadedStrings
   - LambdaCase
   - GeneralizedNewtypeDeriving
+  - NamedFieldPuns

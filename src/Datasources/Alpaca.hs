@@ -1,4 +1,4 @@
-module Analysis.HTTP (
+module Datasources.Alpaca (
     getQuote,
     getBars,
 ) where

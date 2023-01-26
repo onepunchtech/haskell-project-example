@@ -1,0 +1,6 @@
+This is where domain logic would go.
+- Only pure functions
+- Only functions specific to our domain
+  - validating user requests
+- Put generally useful functions in another module
+  - e.g. calculating averages
