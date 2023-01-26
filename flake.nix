@@ -23,17 +23,6 @@
           hPkgs.hspec-discover
           stack-wrapped
           pkgs.zlib
-          pkgs.tree-sitter
-          pkgs.nodejs
-          pkgs.yarn
-          pkgs.kube3d
-          pkgs.kubernetes-helm
-          pkgs.skopeo
-          pkgs.telepresence2
-          pkgs.typescript
-          pkgs.nodePackages.typescript
-          pkgs.nodePackages.typescript-language-server
-          pkgs.typescript
         ];
 
         stack-wrapped = pkgs.symlinkJoin {
@@ -56,7 +45,6 @@
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath myDevTools;
         };
 
-        packages = {
-        };
+        packages = {};
       });
 }
