@@ -43,6 +43,9 @@ dependencies:
   - csv-conduit
   - http-conduit
   - bytestring
+  - wreq
+  - lens
+  - pretty-simple
 
 ghc-options:
   - -Wall
@@ -81,7 +84,6 @@ tests:
       - hspec
       - hspec-discover
       - hspec-junit-formatter
-      - pretty-simple
       - example
 
 default-extensions:

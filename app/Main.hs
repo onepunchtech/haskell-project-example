@@ -1,6 +1,10 @@
 module Main (main) where
 
 import API.HTTP (runServer)
+import Analysis.HTTP
+import Text.Pretty.Simple
 
 main :: IO ()
-main = runServer
+main = do
+    q <- getQuote BTC
+    pPrint q
