@@ -607,7 +607,23 @@ Cons:
 
 * Benchmarking
 
-* Profiling
+* Performance
+
+https://wiki.haskell.org/Performance
+
+  - Time
+    - Datastructure
+      - Okasakis Purely functional datastructures
+  - Space
+    - Strictness
+      - Bang patterns
+      - seq and deepseq
+      - sometimes straight recursion is faster than standard lib folds
+      - Compiler opts
+        - O2 turn on all optimizations slower compile
+        - llvm
+        - play with different Garbage Collectors
+    - tail recursion
 
 * DSL
 
