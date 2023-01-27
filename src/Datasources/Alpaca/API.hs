@@ -1,6 +1,7 @@
 module Datasources.Alpaca.API (
     getQuote,
     getBars,
+    getBarsEither,
 ) where
 
 import Control.Lens
@@ -51,3 +52,7 @@ getBars symbol timeframe start end = do
     httpJSON req >>= \case
         Left err -> throwM $ ParseErr err
         Right v -> pure v
+
+getBarsEither :: (MonadHttp m, MonadConfig m, MonadCatch m) => Text -> Text -> UTCTime -> UTCTime -> m (Either Error Bars)
+getBarsEither symbol timeframe start end =
+    catch (Right <$> getBars symbol timeframe start end) (pure . Left)

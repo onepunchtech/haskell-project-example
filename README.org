@@ -51,3 +51,47 @@ In this case you can set up editor tools globally.
 3. *Globally* install [[https://haskell-language-server.readthedocs.io/en/latest/installation.html][haskell-language-server]]
 4. Ensure editor has lsp client
 5. Follow editor specific instructions on setting up lsp client and haskell-language-server
+
+** ENVIRONMENT SETUP
+
+   #+BEGIN_SRC bash
+   export ALPACAKEY=${fill_me_in}
+   export ALPACASECRET=${fill_me_in}
+   export LD_LIBRARY_PATH=$PWD/number-munch/target/debug:$LD_LIBRARY_PATH
+   #+END_SRC
+
+* Profiling
+
+Reference for rts options
+
+https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/profiling.html
+
+- example useful commands
+
+- time profiling
+   #+BEGIN_SRC bash
+     stack --profile run --rts-options -p
+
+     # get allocation in bytes for each cost centre
+     stack --profile run --rts-options -pa
+
+     # get heap profile based on cost centres
+     stack --profile run --rts-options -hc
+
+     # get heap profile based on types
+     stack --profile run --rts-options -hy
+
+     # heap profiling produces .hp file. Convert it to postscript with hp2ps
+     hp2ps -c -e540 ./api.hp
+
+     # For memory issues it is sometimes useful to limit heap or stack size
+
+     +RTS -M4m -RTS
+
+   #+END_SRC
+
+
+* State machine testing & property based testing
+
+Must watch video
+- https://www.youtube.com/watch?v=zi0rHwfiX1Q

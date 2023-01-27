@@ -47,6 +47,7 @@ library
       GeneralizedNewtypeDeriving
       NamedFieldPuns
       BangPatterns
+      TupleSections
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   extra-libraries:
       number_munch
@@ -96,6 +97,7 @@ executable api
       GeneralizedNewtypeDeriving
       NamedFieldPuns
       BangPatterns
+      TupleSections
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -148,6 +150,7 @@ test-suite example-test
       GeneralizedNewtypeDeriving
       NamedFieldPuns
       BangPatterns
+      TupleSections
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson

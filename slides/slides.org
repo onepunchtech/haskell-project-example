@@ -588,6 +588,11 @@ Cons:
 * HTTP Client
 
 * ErrorHandling
+  - Make invalid states unrepresentable
+  - encode errors as data
+    - sum types
+  - Exceptions
+    - are for concurrency
 
 * Multithreading
 ** STM Overview
@@ -624,6 +629,20 @@ Cons:
 
   - hermes-json simdjson bindings
 
+  - Streaming
+    - conduit-http
+      - wrapper client using conduit streams for http
+    - conduit
+      - high level streaming api
+      - chunking
+      - interleaving IO
+
+  - FFI
+    - https://book.realworldhaskell.org/read/interfacing-with-c-the-ffi.html
+
+  - Testing
+    - prefer hedgehog library over quickcheck
+
 # Extra if we have time
 
 * Arrows
@@ -632,9 +651,3 @@ Cons:
 * Data Parallelism
 * Recursion schemes
 * Reduce ReaderT Boilerplate
-
-* 3rd day priorities
-  - Benchmarking
-    - profiling
-  - Concurrency
-  - FFI

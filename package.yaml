@@ -63,7 +63,6 @@ ghc-options:
 
 library:
   source-dirs: src
-  # extra-lib-dirs: /home/whitehead/workspace/onepunch/workshops/haskell-project-example/number-munch/target/debug
   extra-libraries: number_munch
 
 executables:
@@ -76,6 +75,16 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - example
+  # benches:
+  #   main: Main.hs
+  #   source-dirs: bench
+  #   ghc-options:
+  #     - -threaded
+  #     - -rtsopts
+  #     - -with-rtsopts=-N
+  #   dependencies:
+  #     - criterion
+  #     - example
 
 tests:
   example-test:
@@ -99,3 +108,4 @@ default-extensions:
   - GeneralizedNewtypeDeriving
   - NamedFieldPuns
   - BangPatterns
+  - TupleSections
