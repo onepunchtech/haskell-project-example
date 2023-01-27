@@ -30,9 +30,6 @@ cradle:
     - path: "./src/Config.hs"
       component: "example:lib"
 
-    - path: "./src/Datasources/Alpaca.hs"
-      component: "example:lib"
-
     - path: "./src/Datasources/Alpaca/API.hs"
       component: "example:lib"
 
@@ -40,6 +37,9 @@ cradle:
       component: "example:lib"
 
     - path: "./src/Demo.hs"
+      component: "example:lib"
+
+    - path: "./src/FFI/Rust.hs"
       component: "example:lib"
 
     - path: "./src/Monad.hs"

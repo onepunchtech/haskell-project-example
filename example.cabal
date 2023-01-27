@@ -30,10 +30,10 @@ library
       API.HTTP
       CLI
       Config
-      Datasources.Alpaca
       Datasources.Alpaca.API
       Datasources.Alpaca.Data
       Demo
+      FFI.Rust
       Monad
   other-modules:
       Paths_example
@@ -46,7 +46,10 @@ library
       LambdaCase
       GeneralizedNewtypeDeriving
       NamedFieldPuns
+      BangPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  extra-libraries:
+      number_munch
   build-depends:
       aeson
     , async
@@ -92,6 +95,7 @@ executable api
       LambdaCase
       GeneralizedNewtypeDeriving
       NamedFieldPuns
+      BangPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -143,6 +147,7 @@ test-suite example-test
       LambdaCase
       GeneralizedNewtypeDeriving
       NamedFieldPuns
+      BangPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson

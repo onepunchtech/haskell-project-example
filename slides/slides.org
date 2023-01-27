@@ -622,6 +622,8 @@ Cons:
     - For large public apis open api spec generators are common
       - Example: https://github.com/fullstack-development/haskell-plaid-generated
 
+  - hermes-json simdjson bindings
+
 # Extra if we have time
 
 * Arrows

@@ -63,6 +63,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  # extra-lib-dirs: /home/whitehead/workspace/onepunch/workshops/haskell-project-example/number-munch/target/debug
+  extra-libraries: number_munch
 
 executables:
   api:
@@ -96,3 +98,4 @@ default-extensions:
   - LambdaCase
   - GeneralizedNewtypeDeriving
   - NamedFieldPuns
+  - BangPatterns
